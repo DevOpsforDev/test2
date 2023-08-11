@@ -1,18 +1,30 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-//import './index.css';
-import App from './App';
-import "bulma/css/bulma.css";
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom";
+import { Provider } from "react-redux";
+import { ConnectedRouter } from "react-router-redux";
+import { createBrowserHistory } from "history";
+import "./styles/main.scss";
+import configureStore from "./store/configureStore";
+import App from "./components/app";
+import registerServiceWorker from "./registerServiceWorker";
+
+// Create browser history to use in the Redux store
+const baseUrl = document.getElementsByTagName("base")[0].getAttribute("href");
+const history = createBrowserHistory({ basename: baseUrl });
+
+// Get the application-wide store instance, prepopulating with state from the server where available.
+const initialState = window.initialReduxState;
+const store = configureStore(history, initialState);
+
+const rootElement = document.getElementById("root");
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
+  <Provider store={store}>
+    <ConnectedRouter history={history}>
+      <App />
+    </ConnectedRouter>
+  </Provider>,
+  rootElement,
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+registerServiceWorker();
